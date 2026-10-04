@@ -500,7 +500,7 @@ p {
   border-bottom: 1px dashed var(--line-strong);
 }
 .explorer__title {
-  font: 600 clamp(28px, 3.2vw, 40px) / 1.05 var(--font-display);
+  font: 600 clamp(18px, 2vw, 35px) / 1.05 var(--font-display);
   letter-spacing: -0.025em;
   overflow-wrap: anywhere;
 }
