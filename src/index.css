@@ -177,6 +177,8 @@ p {
   background: color-mix(in srgb, var(--paper) 92%, transparent);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--line-strong);
+  position: relative;
+  z-index: 20;
 }
 .body {
   display: flex;

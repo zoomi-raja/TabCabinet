@@ -1,5 +1,6 @@
 import { Fragment } from 'react';
 import type { RefObject } from 'react';
+import { FilterMenu } from './FilterMenu';
 import {
   ArrowLeft,
   ArrowRight,
@@ -99,17 +100,7 @@ export function AddressBar({ searchRef, ...p }: Props) {
         ))}
       </nav>
 
-      <label className="select">
-        <span className="select__label">Show</span>
-        <select
-          value={p.filter}
-          onChange={(e) => p.onFilter(e.target.value as FilterMode)}
-        >
-          <option value="all">Everything</option>
-          <option value="folders">Folders</option>
-          <option value="bookmarks">Bookmarks</option>
-        </select>
-      </label>
+      <FilterMenu value={p.filter} onChange={p.onFilter} />
 
       <div className="search">
         <Search size={14} className="search__icon" />
