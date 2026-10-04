@@ -1,6 +1,7 @@
 import {
   Archive,
   BookmarkPlus,
+  Droplets,
   FolderPlus,
   LayoutGrid,
   List,
@@ -17,7 +18,12 @@ const VIEWS = [
   { id: 'tiles', label: 'Tiles', Icon: Rows3 },
   { id: 'list', label: 'Details', Icon: List },
 ] as const;
-
+const THEME_META = {
+  light: { label: 'Light', Icon: Sun },
+  dark: { label: 'Dark', Icon: Moon },
+  fluent: { label: 'Fluent blue', Icon: Droplets },
+} as const;
+const NEXT_THEME = { light: 'dark', dark: 'fluent', fluent: 'light' } as const;
 interface Props {
   canCreate: boolean;
   view: ViewMode;
@@ -31,7 +37,10 @@ interface Props {
   onNewFolder: () => void;
   onNewBookmark: () => void;
 }
-
+function ThemeIcon({ theme }: { theme: Theme }) {
+  const { Icon } = THEME_META[theme];
+  return <Icon size={17} />;
+}
 export function CommandBar({
   canCreate,
   view,
@@ -118,12 +127,10 @@ export function CommandBar({
         type="button"
         className="btn btn--icon"
         onClick={onToggleTheme}
-        aria-label={
-          theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'
-        }
-        title={theme === 'dark' ? 'Light theme' : 'Dark theme'}
+        aria-label={`Theme: ${THEME_META[theme].label}. Switch to ${THEME_META[NEXT_THEME[theme]].label}`}
+        title={`Theme: ${THEME_META[theme].label} (click for ${THEME_META[NEXT_THEME[theme]].label})`}
       >
-        {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
+        {(() => <ThemeIcon theme={theme} />)()}
       </button>
       <a
         className="btn btn--icon"

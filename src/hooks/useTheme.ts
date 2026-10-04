@@ -1,19 +1,22 @@
-import { useCallback, useEffect, useState } from 'react'
-import type { Theme } from '../types'
-import { THEME_KEY, applyTheme, readInitialTheme } from '../lib/theme'
+import { useCallback, useEffect, useState } from 'react';
+import type { Theme } from '../types';
+import { THEMES, THEME_KEY, applyTheme, readInitialTheme } from '../lib/theme';
 
 export function useTheme() {
-  const [theme, setTheme] = useState<Theme>(readInitialTheme) // lazy init: read storage once
+  const [theme, setTheme] = useState<Theme>(readInitialTheme); // lazy init: read storage once
 
   useEffect(() => {
-    applyTheme(theme)
+    applyTheme(theme);
     try {
-      localStorage.setItem(THEME_KEY, theme)
+      localStorage.setItem(THEME_KEY, theme);
     } catch {
       // ignore
     }
-  }, [theme])
+  }, [theme]);
 
-  const toggle = useCallback(() => setTheme((t) => (t === 'dark' ? 'light' : 'dark')), [])
-  return { theme, toggle }
+  const toggle = useCallback(
+    () => setTheme((t) => THEMES[(THEMES.indexOf(t) + 1) % THEMES.length]),
+    [],
+  );
+  return { theme, toggle };
 }
