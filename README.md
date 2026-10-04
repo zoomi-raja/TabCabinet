@@ -49,7 +49,7 @@ TabCabinet turns the new tab page into a clean file-explorer for your bookmarks,
 
 ## 🚀 Get started
 
-1. **Download** the latest TabCabinet zip from the **Releases** page and unzip it.
+1. [**Download** the latest TabCabinet zip from the **Releases** page and unzip it.](https://github.com/zoomi-raja/TabCabinet/releases/latest)
 2. In Chrome, go to `chrome://extensions`.
 3. Turn on **Developer mode** (top right).
 4. Click **Load unpacked** and pick the unzipped folder.
