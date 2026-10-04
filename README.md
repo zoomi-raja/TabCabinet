@@ -120,6 +120,6 @@ TabCabinet is free and open source under the [MIT License](LICENSE). You can use
 
 <div align="center">
 
-If TabCabinet makes your new tab nicer, a ⭐ on the repo helps others find it.
+If TabCabinet makes your new tab nicer, a ⭐ on the repo helps others find it..!
 
 </div>
