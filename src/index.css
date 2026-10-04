@@ -620,7 +620,7 @@ p {
   border: 1px solid var(--line-strong);
   border-radius: 10px;
   background:
-    linear-gradient(var(--accent) 0 0) top / 100% 3px no-repeat,
+    linear-gradient(var(--paper) 0 0) top / 100% 3px no-repeat,
     var(--paper-2);
   box-shadow: 0 2px 0 var(--line-strong);
   transition: transform 0.2s var(--ease);

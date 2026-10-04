@@ -107,10 +107,10 @@ export default function App() {
   );
   const items = useMemo(
     () =>
-      index && current
-        ? selectVisible(index, current, { query: deferredQuery, filter, sort })
+      current
+        ? selectVisible(current, { query: deferredQuery, filter, sort })
         : [],
-    [index, current, deferredQuery, filter, sort],
+    [current, deferredQuery, filter, sort],
   );
   const totals = useMemo(
     () => (index ? countAll(index) : { bookmarks: 0, folders: 0 }),
@@ -171,9 +171,10 @@ export default function App() {
     forward();
     setSelected(EMPTY);
   }, [forward]);
+  const parentId = current?.parentId;
   const goUp = useCallback(() => {
-    if (current?.parentId) navigate(current.parentId);
-  }, [current?.parentId, navigate]);
+    if (parentId) navigate(parentId);
+  }, [parentId, navigate]);
 
   const activate = useCallback(
     (node: BmNode, e: MouseEvent) => {
@@ -206,6 +207,11 @@ export default function App() {
       node ? (prev.has(node.id) ? prev : new Set([node.id])) : EMPTY,
     );
     setMenu({ x: e.clientX, y: e.clientY, nodeId: node?.id ?? null });
+  }, []);
+  const openTreeMenu = useCallback((e: MouseEvent, node: BmNode) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setMenu({ x: e.clientX, y: e.clientY, nodeId: node.id });
   }, []);
   const closeMenu = useCallback(() => setMenu(null), []);
   const toggleTrending = useCallback(
@@ -472,6 +478,7 @@ export default function App() {
           trendingOpen={trendingOpen}
           onNavigate={navigate}
           onToggleTrending={toggleTrending}
+          onContextMenu={openTreeMenu}
         />
 
         <main className="workspace">
