@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "TabCabinet",
+  "version": "0.1.0",
+  "description": "Your bookmarks on every new tab",
+  "chrome_url_overrides": {
+    "newtab": "index.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": ["bookmarks", "management", "favicon", "storage"],
+  "host_permissions": ["https://api.github.com/*"]
+}
