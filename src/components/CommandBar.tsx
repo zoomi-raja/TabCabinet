@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import type { SortMode, Theme, ViewMode } from '../types';
 import { GithubMark } from './GithubMark';
+import { SortMenu } from './SortMenu';
 
 const VIEWS = [
   { id: 'grid', label: 'Large icons', Icon: LayoutGrid },
@@ -85,17 +86,7 @@ export function CommandBar({
         <BookmarkPlus size={16} /> Add bookmark
       </button>
 
-      <label className="select">
-        <span className="select__label">Sort</span>
-        <select
-          value={sort}
-          onChange={(e) => onSort(e.target.value as SortMode)}
-        >
-          <option value="name">Name</option>
-          <option value="site">Site</option>
-          <option value="date">Date modified</option>
-        </select>
-      </label>
+      <SortMenu value={sort} onChange={onSort} />
 
       <span className="spacer" />
 
