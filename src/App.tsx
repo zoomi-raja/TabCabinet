@@ -495,9 +495,12 @@ export default function App() {
 
             <div className="explorer__head">
               <h1 className="explorer__title">
-                {searching
-                  ? `Results for “${deferredQuery.trim()}”`
-                  : displayTitle(current)}
+                <FolderOpen size={18} className="explorer__icon" />
+                <span>
+                  {searching
+                    ? `Results for “${deferredQuery.trim()}”`
+                    : displayTitle(current)}
+                </span>
               </h1>
               <span className="explorer__count">
                 {items.length} item{items.length === 1 ? '' : 's'}

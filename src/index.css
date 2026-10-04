@@ -35,7 +35,9 @@
     0 18px 40px -14px rgba(20, 30, 50, 0.3),
     0 1px 0 rgba(255, 255, 255, 0.8) inset;
 }
-
+:root[data-theme='light'] .explorer {
+  background: #ffffff;
+}
 /* Dark: ink */
 :root[data-theme='dark'] {
   color-scheme: dark;
@@ -90,6 +92,10 @@
 }
 /* Fluent: solid yellow folders in the sidebar, like the original template */
 :root[data-theme='fluent'] .tree__label svg {
+  color: var(--folder);
+  fill: var(--folder);
+}
+:root[data-theme='fluent'] .explorer__icon {
   color: var(--folder);
   fill: var(--folder);
 }
@@ -538,16 +544,26 @@ p {
 /* ---------- Explorer ---------- */
 .explorer__head {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 16px;
-  margin-bottom: 26px;
-  padding-bottom: 16px;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
   border-bottom: 1px dashed var(--line-strong);
 }
 .explorer__title {
-  font: 600 clamp(18px, 2vw, 35px) / 1.05 var(--font-display);
-  letter-spacing: -0.025em;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  font: 600 clamp(15px, 1.3vw, 17px) / 1.2 var(--font-display);
+  letter-spacing: -0.01em;
+}
+.explorer__title span {
   overflow-wrap: anywhere;
+}
+.explorer__icon {
+  flex: none;
+  color: var(--folder-deep);
 }
 .explorer__count {
   flex: none;
@@ -884,15 +900,21 @@ p {
   transform: translateY(-2px);
   border-color: var(--accent);
 }
-.repo__name {
-  display: inline-flex;
+.repo__head {
+  display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 10px;
   min-width: 0;
+}
+.repo__name {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font: 600 13.5px var(--font-mono);
   color: var(--accent);
   text-decoration: none;
-  overflow-wrap: anywhere;
 }
 .repo__name:hover {
   text-decoration: underline;
@@ -928,18 +950,21 @@ p {
   border-radius: 50%;
 }
 .repo__stars {
+  flex: none;
+  margin-left: auto;
+  font: 500 11.5px var(--font-mono);
   color: var(--folder-deep);
 }
 .repo__save {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  margin-left: auto;
-  padding: 3px 8px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
   border: 1px solid var(--line-strong);
-  border-radius: 6px;
+  border-radius: 7px;
   background: transparent;
-  font: 600 11.5px var(--font-body);
   color: var(--ink-2);
 }
 .repo__save:hover {

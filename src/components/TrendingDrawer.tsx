@@ -1,16 +1,12 @@
 import { memo } from 'react';
-import {
-  BookmarkPlus,
-  ChevronDown,
-  ExternalLink,
-  RotateCw,
-  Star,
-} from 'lucide-react';
+import { BookmarkPlus, ChevronDown, RotateCw, Star } from 'lucide-react';
 import { useTrending } from '../hooks/useTrending';
 import type { TrendingRepo } from '../types';
 import { GithubMark } from './GithubMark';
 
 // Hoisted: created once, not on every render.
+// Hoisted: created once, not on every render. Based on GitHub's language colours,
+// with a few very dark ones lightened so they stay visible on the dark themes.
 const LANGUAGE_COLORS: Record<string, string> = {
   TypeScript: '#3178c6',
   JavaScript: '#f1e05a',
@@ -19,17 +15,53 @@ const LANGUAGE_COLORS: Record<string, string> = {
   Go: '#00add8',
   Zig: '#ec915c',
   'C++': '#f34b7d',
-  C: '#8a8a8a',
-  Java: '#b07219',
-  Swift: '#f05138',
-  Kotlin: '#a97bff',
-  Ruby: '#a31f1f',
+  C: '#5c6bc0',
   'C#': '#178600',
-  PHP: '#4f5d95',
-  HTML: '#e34c26',
-  Shell: '#89e051',
+  Java: '#b07219',
+  Kotlin: '#a97bff',
+  Swift: '#f05138',
+  'Objective-C': '#438eff',
   Dart: '#00b4ab',
+  Ruby: '#d9453d',
+  PHP: '#4f5d95',
+  Shell: '#89e051',
+  PowerShell: '#3a7bd5',
+  Lua: '#4a5fd0',
+  Perl: '#0298c3',
+  R: '#198ce7',
+  Julia: '#a270ba',
+  Scala: '#c22d40',
+  Elixir: '#9b6bb8',
+  Haskell: '#8a7bc4',
+  Clojure: '#db5855',
+  OCaml: '#ef7a08',
+  Nix: '#7e7eff',
+  HTML: '#e34c26',
+  CSS: '#8b5cf6',
+  SCSS: '#c6538c',
+  Vue: '#41b883',
+  Svelte: '#ff3e00',
+  Markdown: '#4a7bd8',
+  MDX: '#fcb32c',
+  TeX: '#5f9a2a',
+  Dockerfile: '#2f9fe0',
+  Makefile: '#5fa22a',
+  'Jupyter Notebook': '#da5b0b',
+  Solidity: '#aa6746',
+  Assembly: '#c08a3e',
 };
+
+/** Languages not listed above still get their own stable colour (never gray). */
+function hashColor(name: string) {
+  let h = 0;
+  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) % 360;
+  return `hsl(${h} 65% 55%)`;
+}
+
+function languageColor(language: string | null) {
+  if (!language) return 'var(--ink-3)'; // only "Unknown" stays gray
+  return LANGUAGE_COLORS[language] ?? hashColor(language);
+}
 const SKELETONS = [0, 1, 2, 3, 4];
 const compact = new Intl.NumberFormat('en', {
   notation: 'compact',
@@ -45,39 +77,37 @@ function RepoCard({
 }) {
   return (
     <article className="repo">
-      <a
-        className="repo__name"
-        href={repo.url}
-        target="_blank"
-        rel="noreferrer"
-      >
-        {repo.fullName}
-        <ExternalLink size={12} />
-      </a>
+      <header className="repo__head">
+        <a
+          className="repo__name"
+          href={repo.url}
+          target="_blank"
+          rel="noreferrer"
+          title={repo.fullName}
+        >
+          {repo.fullName}
+        </a>
+        <button
+          type="button"
+          className="repo__save"
+          onClick={() => onSave(repo)}
+          title="Save to bookmarks"
+          aria-label={`Save ${repo.fullName} to bookmarks`}
+        >
+          <BookmarkPlus size={15} />
+        </button>
+      </header>
       <p className="repo__desc">
         {repo.description ?? 'No description provided.'}
       </p>
       <footer className="repo__foot">
         <span className="repo__lang">
-          <i
-            style={{
-              background:
-                LANGUAGE_COLORS[repo.language ?? ''] ?? 'var(--ink-3)',
-            }}
-          />
+          <i style={{ background: languageColor(repo.language) }} />
           {repo.language ?? 'Unknown'}
         </span>
         <span className="repo__stars">
           <Star size={12} fill="currentColor" /> {compact.format(repo.stars)}
         </span>
-        <button
-          type="button"
-          className="repo__save"
-          onClick={() => onSave(repo)}
-          title="Save to the open folder"
-        >
-          <BookmarkPlus size={14} /> Save
-        </button>
       </footer>
     </article>
   );
