@@ -1,4 +1,4 @@
-import { memo, useMemo, useState } from 'react';
+import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { ChevronRight, Folder, House } from 'lucide-react';
 import { displayTitle, isFolder } from '../lib/bookmarks';
 import type { BmNode } from '../types';
@@ -23,12 +23,27 @@ function TreeBranch({
   onContextMenu,
 }: BranchProps) {
   const folders = (node.children ?? []).filter(isFolder);
-  const [open, setOpen] = useState(depth === 0 || trailIds.has(node.id));
+  const onTrail = trailIds.has(node.id);
+  const [open, setOpen] = useState(onTrail);
   const current = node.id === currentId;
+  const rowRef = useRef<HTMLDivElement>(null);
+
+  // When the open folder changes, expand every folder on the path to it.
+  const [seenCurrent, setSeenCurrent] = useState(currentId);
+  if (seenCurrent !== currentId) {
+    setSeenCurrent(currentId);
+    if (onTrail) setOpen(true);
+  }
+
+  // Keep the highlighted row visible when the tree is long.
+  useEffect(() => {
+    if (current) rowRef.current?.scrollIntoView({ block: 'nearest' });
+  }, [current]);
 
   return (
     <li>
       <div
+        ref={rowRef}
         className="tree__row"
         data-current={current ? '' : undefined}
         onContextMenu={(e) => onContextMenu(e, node)}
