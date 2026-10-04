@@ -645,19 +645,21 @@ p {
   white-space: nowrap;
 }
 
-/* Index-card glyph for bookmarks */
+/* Index-card glyph for bookmarks.
+   Size is set per view below, so no view overrides another by specificity. */
 .item__glyph--card {
-  width: 56px;
-  height: 56px;
-  border: 1px solid var(--line-strong);
   border-radius: 10px;
+  border: 1px solid var(--line-strong);
   background:
     linear-gradient(var(--paper) 0 0) top / 100% 3px no-repeat,
     var(--paper-2);
   box-shadow: 0 2px 0 var(--line-strong);
   transition: transform 0.2s var(--ease);
 }
-.item__glyph--card img {
+.item__glyph--card img,
+.item__glyph--card svg {
+  width: 26px;
+  height: 26px;
   border-radius: 4px;
 }
 .item:hover .item__glyph,
@@ -722,6 +724,12 @@ p {
   width: 56px;
   height: 56px;
 }
+/* 48px card + 4px above + 8px below = same 60px as a folder box, so names line up */
+.items--grid .item__glyph--card {
+  width: 48px;
+  height: 48px;
+  margin: 4px 0 8px;
+}
 .items--grid .item__name,
 .items--grid .item__meta {
   max-width: 100%;
@@ -771,9 +779,10 @@ p {
   box-shadow: none;
   background: var(--paper-2);
 }
-.items--list .item__glyph--card img {
-  width: 16px;
-  height: 16px;
+.items--list .item__glyph--card img,
+.items--list .item__glyph--card svg {
+  width: 18px;
+  height: 18px;
 }
 .items--list .folder-glyph {
   --s: 0.5;
