@@ -807,7 +807,7 @@ p {
   align-items: center;
   gap: 10px;
   width: 100%;
-  padding: 11px clamp(16px, 2vw, 24px);
+  padding: 5.5px clamp(16px, 2vw, 24px);
   border: 0;
   background: transparent;
   text-align: left;
