@@ -3,7 +3,7 @@ export type BmNode = chrome.bookmarks.BookmarkTreeNode;
 export type ViewMode = 'grid' | 'list' | 'tiles';
 export type SortMode = 'name' | 'site' | 'date';
 export type FilterMode = 'all' | 'folders' | 'bookmarks';
-export type Theme = 'light' | 'dark' | 'fluent';
+export type Theme = 'light' | 'dark' | 'fluent' | 'mac';
 
 export interface TrendingRepo {
   id: number;

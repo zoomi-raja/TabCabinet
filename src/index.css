@@ -108,6 +108,62 @@
 :root[data-theme='fluent'] .repo__stars {
   color: #34d399;
 }
+/* Mac: light and Finder-like. Its explorer layout lives in the Mac*.module.css files. */
+:root[data-theme='mac'] {
+  color-scheme: light;
+  --font-display:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue',
+    system-ui, sans-serif;
+  --font-body:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue',
+    system-ui, sans-serif;
+  --bg: #f2f2f4;
+  --paper: #fbfbfc;
+  --paper-2: #ffffff;
+  --ink: #1d1d1f;
+  --ink-2: #4a4a4f;
+  --ink-3: #6e6e73;
+  --line: #e6e6ea;
+  --line-strong: #d2d2d7;
+  --accent: #0071e3;
+  --accent-ink: #ffffff;
+  --accent-soft: rgba(0, 113, 227, 0.08);
+  --folder: #c99a4e;
+  --folder-deep: #b9822f;
+  --folder-ink: #3b2a06;
+  --folder-tint: #fff3df;
+  --grain: 0;
+  --shadow:
+    0 12px 32px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.04);
+}
+/* Mac: flat, quiet chrome. These classes are shared by every theme. */
+:root[data-theme='mac'] .brand__mark {
+  transform: none;
+  box-shadow: none;
+}
+:root[data-theme='mac'] .btn--primary {
+  box-shadow: none;
+}
+:root[data-theme='mac'] .explorer {
+  background: #fafafa;
+}
+:root[data-theme='mac'] .explorer__head {
+  border-bottom-style: solid;
+  border-bottom-color: var(--line);
+}
+/* Mac: Delete stays red even though the accent is blue */
+:root[data-theme='mac'] .btn--danger {
+  background: #ff3b30;
+  color: #fff;
+  box-shadow: none;
+}
+:root[data-theme='mac'] .btn--danger:hover:not(:disabled) {
+  background: #ff5247;
+}
+:root[data-theme='mac'] .menu__item[data-danger] {
+  color: #d70015;
+}
+
 *,
 *::before,
 *::after {

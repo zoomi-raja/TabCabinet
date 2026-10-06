@@ -1,0 +1,20 @@
+/* Shared white card look for the Mac folder cards and link tiles. */
+.card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  transition:
+    background-color 0.15s,
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+.card:hover {
+  border-color: var(--line-strong);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+.card[data-selected] {
+  background: #f1f6fe;
+  border-color: color-mix(in srgb, var(--accent) 38%, #fff);
+  box-shadow: none;
+}

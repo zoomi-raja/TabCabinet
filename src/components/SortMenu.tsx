@@ -44,11 +44,11 @@ export function SortMenu({ value, onChange }: Props) {
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-label={`Sort by: ${current.label}`}
-        title="Sort by"
+        title={`Sort by: ${current.label}`}
         onClick={() => setOpen((o) => !o)}
       >
         <current.Icon size={15} className={styles.icon} />
-        <span>{current.label}</span>
+        <span>Sort by</span>
         <ChevronDown
           size={13}
           className={styles.chev}

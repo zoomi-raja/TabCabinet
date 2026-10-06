@@ -44,11 +44,23 @@ export const modifiedAt = (n: BmNode) =>
 export const isProtected = (n: BmNode) =>
   n.id === ROOT_ID || n.parentId === ROOT_ID;
 
+/** "Bookmarks bar/Dev" style path of the folder a node lives in (Home excluded). */
+export function folderPath(index: Map<string, BmNode>, node: BmNode): string {
+  const names: string[] = [];
+  let cur = node.parentId ? index.get(node.parentId) : undefined;
+  while (cur && cur.id !== ROOT_ID) {
+    names.push(displayTitle(cur));
+    cur = cur.parentId ? index.get(cur.parentId) : undefined;
+  }
+  return names.reverse().join('/');
+}
+
 interface ViewOptions {
   query: string;
   filter: FilterMode;
   sort: SortMode;
 }
+
 /** Every node below `node`, at any depth. */
 function descendantsOf(node: BmNode, out: BmNode[] = []): BmNode[] {
   for (const child of node.children ?? []) {
@@ -57,6 +69,7 @@ function descendantsOf(node: BmNode, out: BmNode[] = []): BmNode[] {
   }
   return out;
 }
+
 /** Search + filter + sort in a single pass over the candidates. */
 export function selectVisible(
   current: BmNode,
