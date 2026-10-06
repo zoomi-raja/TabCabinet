@@ -1,0 +1,64 @@
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+/* The padding keeps the card shadow from being clipped by content-visibility */
+.cell {
+  padding: 4px;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 90px;
+}
+
+.card {
+  display: grid;
+  align-items: center;
+  width: 100%;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  grid-template-areas:
+    'icon name chev'
+    'icon meta chev';
+  column-gap: 14px;
+  padding: 16px;
+  color: inherit;
+  text-align: left;
+  animation: rise 0.45s var(--ease) both;
+  animation-delay: calc(var(--i, 0) * 24ms);
+}
+.card:focus-visible {
+  outline-offset: -2px;
+}
+
+.icon {
+  grid-area: icon;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 11px;
+  background: var(--folder-tint, #fff3df);
+  color: var(--folder-deep);
+}
+
+.name {
+  grid-area: name;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.meta {
+  grid-area: meta;
+  font: 13px var(--font-body);
+  color: var(--ink-3);
+}
+
+.chev {
+  grid-area: chev;
+  color: var(--ink-3);
+}

@@ -1,6 +1,7 @@
 import {
   Archive,
   BookmarkPlus,
+  Command,
   Droplets,
   FolderPlus,
   LayoutGrid,
@@ -12,18 +13,29 @@ import {
 } from 'lucide-react';
 import type { SortMode, Theme, ViewMode } from '../types';
 import { GithubMark } from './GithubMark';
+import { SortMenu } from './SortMenu';
+import { THEMES } from '../lib/theme';
 
 const VIEWS = [
   { id: 'grid', label: 'Large icons', Icon: LayoutGrid },
   { id: 'tiles', label: 'Tiles', Icon: Rows3 },
   { id: 'list', label: 'Details', Icon: List },
 ] as const;
+
 const THEME_META = {
   light: { label: 'Light', Icon: Sun },
   dark: { label: 'Dark', Icon: Moon },
   fluent: { label: 'Fluent blue', Icon: Droplets },
-} as const;
-const NEXT_THEME = { light: 'dark', dark: 'fluent', fluent: 'light' } as const;
+  mac: { label: 'Mac', Icon: Command },
+} as const satisfies Record<Theme, { label: string; Icon: unknown }>;
+
+const nextTheme = (t: Theme) => THEMES[(THEMES.indexOf(t) + 1) % THEMES.length];
+
+function ThemeIcon({ theme }: { theme: Theme }) {
+  const { Icon } = THEME_META[theme];
+  return <Icon size={17} />;
+}
+
 interface Props {
   canCreate: boolean;
   view: ViewMode;
@@ -37,10 +49,7 @@ interface Props {
   onNewFolder: () => void;
   onNewBookmark: () => void;
 }
-function ThemeIcon({ theme }: { theme: Theme }) {
-  const { Icon } = THEME_META[theme];
-  return <Icon size={17} />;
-}
+
 export function CommandBar({
   canCreate,
   view,
@@ -54,9 +63,12 @@ export function CommandBar({
   onNewFolder,
   onNewBookmark,
 }: Props) {
+  // The Mac theme has no Large icons option
+  const views = theme === 'mac' ? VIEWS.filter((v) => v.id !== 'grid') : VIEWS;
   const hint = canCreate
     ? undefined
     : 'Open a folder first. Home only lists your top-level folders.';
+  const nextLabel = THEME_META[nextTheme(theme)].label;
   return (
     <div className="cmdbar">
       <div className="brand">
@@ -85,22 +97,12 @@ export function CommandBar({
         <BookmarkPlus size={16} /> Add bookmark
       </button>
 
-      <label className="select">
-        <span className="select__label">Sort</span>
-        <select
-          value={sort}
-          onChange={(e) => onSort(e.target.value as SortMode)}
-        >
-          <option value="name">Name</option>
-          <option value="site">Site</option>
-          <option value="date">Date modified</option>
-        </select>
-      </label>
+      <SortMenu value={sort} onChange={onSort} />
 
       <span className="spacer" />
 
       <div className="segmented" role="group" aria-label="View mode">
-        {VIEWS.map(({ id, label, Icon }) => (
+        {views.map(({ id, label, Icon }) => (
           <button
             key={id}
             type="button"
@@ -127,10 +129,10 @@ export function CommandBar({
         type="button"
         className="btn btn--icon"
         onClick={onToggleTheme}
-        aria-label={`Theme: ${THEME_META[theme].label}. Switch to ${THEME_META[NEXT_THEME[theme]].label}`}
-        title={`Theme: ${THEME_META[theme].label} (click for ${THEME_META[NEXT_THEME[theme]].label})`}
+        aria-label={`Theme: ${THEME_META[theme].label}. Switch to ${nextLabel}`}
+        title={`Theme: ${THEME_META[theme].label} (click for ${nextLabel})`}
       >
-        {(() => <ThemeIcon theme={theme} />)()}
+        <ThemeIcon theme={theme} />
       </button>
       <a
         className="btn btn--icon"

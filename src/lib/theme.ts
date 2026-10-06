@@ -2,6 +2,12 @@ import type { Theme } from '../types';
 
 export const THEME_KEY = 'tabcabinet:theme';
 
+export const THEMES: readonly Theme[] = ['light', 'dark', 'mac', 'fluent'];
+
+export function isTheme(value: unknown): value is Theme {
+  return THEMES.includes(value as Theme);
+}
+
 export function readInitialTheme(): Theme {
   try {
     const stored = localStorage.getItem(THEME_KEY);
@@ -13,11 +19,7 @@ export function readInitialTheme(): Theme {
     ? 'dark'
     : 'light';
 }
-export const THEMES: readonly Theme[] = ['light', 'dark', 'fluent'];
 
-export function isTheme(value: unknown): value is Theme {
-  return THEMES.includes(value as Theme);
-}
 export function applyTheme(theme: Theme) {
   document.documentElement.dataset.theme = theme;
 }

@@ -170,9 +170,7 @@ export const TrendingDrawer = memo(function TrendingDrawer({
         aria-expanded={open}
         onClick={onToggle}
       >
-        <GithubMark style={{ fontSize: 18 }} />
-        <span className="drawer__title">Trending on GitHub</span>
-        <span className="chip">Most stars</span>
+        <GithubMark style={{ fontSize: 14 }} />
         <ChevronDown
           size={16}
           className="drawer__chev"

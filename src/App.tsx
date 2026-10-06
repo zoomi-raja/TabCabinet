@@ -21,10 +21,13 @@ import {
 } from 'lucide-react';
 import { AddressBar } from './components/AddressBar';
 import { CommandBar } from './components/CommandBar';
+import { ConfirmDialog } from './components/ConfirmDialog';
+import type { ConfirmState } from './components/ConfirmDialog';
 import { ConflictBanner } from './components/ConflictBanner';
 import { ContextMenu } from './components/ContextMenu';
 import type { MenuEntry } from './components/ContextMenu';
 import { ExplorerItem } from './components/ExplorerItem';
+import { MacExplorer } from './components/MacExplorer';
 import { NameDialog } from './components/NameDialog';
 import type { DialogState, DialogValues } from './components/NameDialog';
 import { Sidebar } from './components/Sidebar';
@@ -35,8 +38,6 @@ import { useFolderHistory } from './hooks/useFolderHistory';
 import { usePersistentState } from './hooks/usePersistentState';
 import { useTheme } from './hooks/useTheme';
 import { useToast } from './hooks/useToast';
-import { ConfirmDialog } from './components/ConfirmDialog';
-import type { ConfirmState } from './components/ConfirmDialog';
 import {
   createBookmark,
   createFolder,
@@ -91,7 +92,7 @@ export default function App() {
   const [selected, setSelected] = useState<ReadonlySet<string>>(EMPTY);
   const [clipboard, setClipboard] = useState<ClipboardEntry | null>(null);
   const [dialog, setDialog] = useState<DialogState | null>(null);
-  const [confirm, setConfirm] = useState<ConfirmState | null>(null);
+  const [confirmState, setConfirmState] = useState<ConfirmState | null>(null);
   const [menu, setMenu] = useState<MenuState | null>(null);
   const { message, show } = useToast();
   const searchRef = useRef<HTMLInputElement>(null);
@@ -101,6 +102,7 @@ export default function App() {
     ? (index.get(currentId) ?? index.get(ROOT_ID) ?? null)
     : null;
   const atRoot = current?.id === ROOT_ID;
+  const parentId = current?.parentId;
   const trail = useMemo(
     () => (index && current ? getTrail(index, current.id) : []),
     [index, current],
@@ -111,6 +113,17 @@ export default function App() {
         ? selectVisible(current, { query: deferredQuery, filter, sort })
         : [],
     [current, deferredQuery, filter, sort],
+  );
+  // The Mac theme has no Large icons: fall back to Tiles without touching the saved choice.
+  const isMac = theme === 'mac';
+  const viewMode: ViewMode = isMac && view === 'grid' ? 'tiles' : view;
+  const folderItems = useMemo(
+    () => (isMac ? items.filter(isFolder) : []),
+    [isMac, items],
+  );
+  const linkItems = useMemo(
+    () => (isMac ? items.filter((n) => !isFolder(n)) : []),
+    [isMac, items],
   );
   const totals = useMemo(
     () => (index ? countAll(index) : { bookmarks: 0, folders: 0 }),
@@ -154,7 +167,7 @@ export default function App() {
     [show],
   );
 
-  // --- Stable handlers (functional setState keeps deps empty so memoized children don't re-render) ---
+  // --- Stable handlers (functional setState keeps deps small so memoized children don't re-render) ---
   const navigate = useCallback(
     (id: string) => {
       go(id);
@@ -171,28 +184,24 @@ export default function App() {
     forward();
     setSelected(EMPTY);
   }, [forward]);
-  const parentId = current?.parentId;
   const goUp = useCallback(() => {
     if (parentId) navigate(parentId);
   }, [parentId, navigate]);
 
-  const activate = useCallback(
-    (node: BmNode, e: MouseEvent) => {
-      if (e.ctrlKey || e.metaKey) {
-        setSelected((prev) => {
-          const next = new Set(prev);
-          if (next.has(node.id)) next.delete(node.id);
-          else next.add(node.id);
-          return next;
-        });
-      } else if (isFolder(node)) {
-        setSelected(new Set([node.id]));
-      } else {
-        void openHere(node.url!);
-      }
-    },
-    [navigate],
-  );
+  const activate = useCallback((node: BmNode, e: MouseEvent) => {
+    if (e.ctrlKey || e.metaKey) {
+      setSelected((prev) => {
+        const next = new Set(prev);
+        if (next.has(node.id)) next.delete(node.id);
+        else next.add(node.id);
+        return next;
+      });
+    } else if (isFolder(node)) {
+      setSelected(new Set([node.id])); // folders open on double-click
+    } else {
+      void openHere(node.url!);
+    }
+  }, []);
   const openFolder = useCallback(
     (node: BmNode) => navigate(node.id),
     [navigate],
@@ -208,6 +217,7 @@ export default function App() {
     );
     setMenu({ x: e.clientX, y: e.clientY, nodeId: node?.id ?? null });
   }, []);
+  // Sidebar folders may not be in the current view, so the selection is left alone.
   const openTreeMenu = useCallback((e: MouseEvent, node: BmNode) => {
     e.preventDefault();
     e.stopPropagation();
@@ -225,10 +235,10 @@ export default function App() {
 
   const saveRepo = useCallback(
     (repo: TrendingRepo) => {
-      const parentId = newItemParent ?? root?.children?.[0]?.id;
-      if (!parentId) return;
+      const target = newItemParent ?? root?.children?.[0]?.id;
+      if (!target) return;
       void run(
-        () => createBookmark(parentId, repo.fullName, repo.url),
+        () => createBookmark(target, repo.fullName, repo.url),
         `Saved ${repo.fullName}`,
       );
     },
@@ -282,9 +292,11 @@ export default function App() {
     };
 
     const full = targets.find((n) => isFolder(n) && n.children?.length);
-    if (!full) return doDelete();
-
-    setConfirm({
+    if (!full) {
+      doDelete();
+      return;
+    }
+    setConfirmState({
       title:
         targets.length === 1
           ? 'Delete folder?'
@@ -292,20 +304,20 @@ export default function App() {
       message:
         targets.length === 1
           ? `"${displayTitle(full)}" and everything inside it will be permanently deleted.`
-          : `These items, including everything inside any folders, will be permanently deleted.`,
+          : 'These items, including everything inside any folders, will be permanently deleted.',
       confirmLabel: 'Delete',
       onConfirm: doDelete,
     });
   }
 
-  function paste(parentId: string) {
-    if (!clipboard || parentId === ROOT_ID) return;
+  function paste(target: string) {
+    if (!clipboard || target === ROOT_ID) return;
     const { id, title, url, mode } = clipboard;
     if (mode === 'cut') {
-      void run(() => moveNode(id, parentId), `Moved "${title}"`);
+      void run(() => moveNode(id, target), `Moved "${title}"`);
       setClipboard(null);
     } else if (url) {
-      void run(() => createBookmark(parentId, title, url), `Pasted "${title}"`);
+      void run(() => createBookmark(target, title, url), `Pasted "${title}"`);
     }
   }
 
@@ -439,7 +451,7 @@ export default function App() {
       <header className="topbar">
         <CommandBar
           canCreate={!!newItemParent}
-          view={view}
+          view={viewMode}
           sort={sort}
           theme={theme}
           trendingOpen={trendingOpen}
@@ -454,7 +466,7 @@ export default function App() {
           trail={trail}
           canBack={canBack}
           canForward={canForward}
-          canUp={!atRoot && !!current.parentId}
+          canUp={!atRoot && !!parentId}
           sidebarOpen={sidebarOpen}
           query={query}
           filter={filter}
@@ -486,26 +498,12 @@ export default function App() {
             className="explorer"
             aria-label="Bookmarks"
             onClick={(e) => {
-              if (!(e.target as HTMLElement).closest('.item'))
+              if (!(e.target as HTMLElement).closest('.item, [data-item]'))
                 setSelected(EMPTY);
             }}
             onContextMenu={(e) => openMenu(e, null)}
           >
             {CONFLICT ? <ConflictBanner /> : null}
-
-            <div className="explorer__head">
-              <h1 className="explorer__title">
-                <FolderOpen size={18} className="explorer__icon" />
-                <span>
-                  {searching
-                    ? `Results for “${deferredQuery.trim()}”`
-                    : displayTitle(current)}
-                </span>
-              </h1>
-              <span className="explorer__count">
-                {items.length} item{items.length === 1 ? '' : 's'}
-              </span>
-            </div>
 
             {items.length === 0 ? (
               <div className="empty">
@@ -516,12 +514,26 @@ export default function App() {
                 </p>
                 <p>
                   {searching
-                    ? 'Check the spelling, or change the “Show” filter.'
+                    ? 'Check the spelling, or change the filter.'
                     : 'Right-click here to add a folder or a bookmark.'}
                 </p>
               </div>
+            ) : isMac ? (
+              <MacExplorer
+                folders={folderItems}
+                links={linkItems}
+                view={viewMode === 'list' ? 'list' : 'tiles'}
+                index={index}
+                selected={selected}
+                canCreateFolder={!!newItemParent}
+                onNewFolder={() => setDialog({ kind: 'folder' })}
+                onActivate={activate}
+                onOpenFolder={openFolder}
+                onAuxClick={openBackground}
+                onContextMenu={openMenu}
+              />
             ) : (
-              <ul className={`items items--${view}`}>
+              <ul className={`items items--${viewMode}`}>
                 {items.map((n, i) => (
                   <ExplorerItem
                     key={n.id}
@@ -571,7 +583,10 @@ export default function App() {
         onClose={() => setDialog(null)}
         onSubmit={submitDialog}
       />
-      <ConfirmDialog state={confirm} onClose={() => setConfirm(null)} />
+      <ConfirmDialog
+        state={confirmState}
+        onClose={() => setConfirmState(null)}
+      />
 
       <div
         className="toast"

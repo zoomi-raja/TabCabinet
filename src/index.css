@@ -44,17 +44,17 @@
   --bg: #0e1210;
   --paper: #151b17;
   --paper-2: #1b231e;
-  --ink: #ece4cf;
-  --ink-2: #b1ab94;
-  --ink-3: #8d8974;
-  --line: #26312a;
-  --line-strong: #394739;
-  --accent: #f07c52;
-  --accent-ink: #1b0e07;
-  --accent-soft: rgba(240, 124, 82, 0.15);
-  --folder: #d3a247;
-  --folder-deep: #a97d2d;
-  --folder-ink: #2a1d04;
+  --ink: #fbfaf6;
+  --ink-2: #d8d4c7;
+  --ink-3: #aeaa9a;
+  --line: #34423a;
+  --line-strong: #52625a;
+  --accent: #f4f1e8;
+  --accent-ink: #14201a;
+  --accent-soft: rgba(244, 241, 232, 0.1);
+  --folder: #e8e4d8;
+  --folder-deep: #bdb8a8;
+  --folder-ink: #1b2420;
   --grain: 0.1;
   --shadow:
     0 18px 40px -14px rgba(0, 0, 0, 0.85),
@@ -108,6 +108,67 @@
 :root[data-theme='fluent'] .repo__stars {
   color: #34d399;
 }
+/* Mac: light and Finder-like. Its explorer layout lives in the Mac*.module.css files. */
+:root[data-theme='mac'] {
+  color-scheme: light;
+  --font-display:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue',
+    system-ui, sans-serif;
+  --font-body:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue',
+    system-ui, sans-serif;
+  --bg: #f2f2f4;
+  --paper: #fbfbfc;
+  --paper-2: #ffffff;
+  --ink: #1d1d1f;
+  --ink-2: #4a4a4f;
+  --ink-3: #6e6e73;
+  --line: #e6e6ea;
+  --line-strong: #d2d2d7;
+  --accent: #0071e3;
+  --accent-ink: #ffffff;
+  --accent-soft: rgba(0, 113, 227, 0.08);
+  --folder: #c99a4e;
+  --folder-deep: #b9822f;
+  --folder-ink: #3b2a06;
+  --folder-tint: #fff3df;
+  --grain: 0;
+  --shadow:
+    0 12px 32px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.04);
+}
+/* Mac: flat, quiet chrome. These classes are shared by every theme. */
+:root[data-theme='mac'] .brand__mark {
+  transform: none;
+  box-shadow: none;
+}
+:root[data-theme='mac'] .btn--primary {
+  box-shadow: none;
+}
+:root[data-theme='mac'] .explorer {
+  background: #fafafa;
+}
+:root[data-theme='mac'] .explorer__head {
+  border-bottom-style: solid;
+  border-bottom-color: var(--line);
+}
+:root[data-theme='mac'] .tree__label:not([aria-current='page']) svg {
+  color: var(--folder);
+  stroke: var(--folder);
+  fill: none;
+}
+/* Mac: Delete stays red even though the accent is blue */
+:root[data-theme='mac'] .btn--danger {
+  background: #ff3b30;
+  color: #fff;
+  box-shadow: none;
+}
+:root[data-theme='mac'] .btn--danger:hover:not(:disabled) {
+  background: #ff5247;
+}
+:root[data-theme='mac'] .menu__item[data-danger] {
+  color: #d70015;
+}
+
 *,
 *::before,
 *::after {
@@ -256,35 +317,6 @@ p {
 }
 .btn--primary:hover:not(:disabled) {
   background: color-mix(in srgb, var(--accent) 88%, #fff);
-}
-
-.select {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  height: 34px;
-  padding: 0 4px 0 12px;
-  border: 1px solid var(--line-strong);
-  border-radius: 8px;
-  background: var(--paper-2);
-}
-.select__label {
-  font: 500 10.5px var(--font-mono);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--ink-3);
-}
-.select select {
-  height: 100%;
-  border: 0;
-  background: transparent;
-  padding-right: 6px;
-  font-weight: 500;
-  cursor: pointer;
-}
-.select select option {
-  background: var(--paper-2);
-  color: var(--ink);
 }
 
 .segmented {
@@ -674,19 +706,21 @@ p {
   white-space: nowrap;
 }
 
-/* Index-card glyph for bookmarks */
+/* Index-card glyph for bookmarks.
+   Size is set per view below, so no view overrides another by specificity. */
 .item__glyph--card {
-  width: 56px;
-  height: 56px;
-  border: 1px solid var(--line-strong);
   border-radius: 10px;
+  border: 1px solid var(--line-strong);
   background:
     linear-gradient(var(--paper) 0 0) top / 100% 3px no-repeat,
     var(--paper-2);
   box-shadow: 0 2px 0 var(--line-strong);
   transition: transform 0.2s var(--ease);
 }
-.item__glyph--card img {
+.item__glyph--card img,
+.item__glyph--card svg {
+  width: 26px;
+  height: 26px;
   border-radius: 4px;
 }
 .item:hover .item__glyph,
@@ -751,6 +785,12 @@ p {
   width: 56px;
   height: 56px;
 }
+/* 48px card + 4px above + 8px below = same 60px as a folder box, so names line up */
+.items--grid .item__glyph--card {
+  width: 48px;
+  height: 48px;
+  margin: 4px 0 8px;
+}
 .items--grid .item__name,
 .items--grid .item__meta {
   max-width: 100%;
@@ -800,9 +840,10 @@ p {
   box-shadow: none;
   background: var(--paper-2);
 }
-.items--list .item__glyph--card img {
-  width: 16px;
-  height: 16px;
+.items--list .item__glyph--card img,
+.items--list .item__glyph--card svg {
+  width: 18px;
+  height: 18px;
 }
 .items--list .folder-glyph {
   --s: 0.5;
@@ -827,7 +868,7 @@ p {
   align-items: center;
   gap: 10px;
   width: 100%;
-  padding: 11px clamp(16px, 2vw, 24px);
+  padding: 5.5px clamp(16px, 2vw, 24px);
   border: 0;
   background: transparent;
   text-align: left;

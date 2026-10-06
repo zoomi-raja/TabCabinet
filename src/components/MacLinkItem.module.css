@@ -1,0 +1,160 @@
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+.cell {
+  content-visibility: auto;
+}
+.cell[data-view='tiles'] {
+  padding: 4px; /* keeps the card shadow from being clipped */
+  contain-intrinsic-size: auto 180px;
+}
+.cell[data-view='list'] {
+  contain-intrinsic-size: auto 52px;
+}
+/* Hairline between list rows */
+.cell[data-view='list'] + .cell[data-view='list'] {
+  border-top: 1px solid var(--line);
+}
+
+.item {
+  display: grid;
+  align-items: center;
+  width: 100%;
+  color: inherit;
+  text-align: left;
+  text-decoration: none;
+  animation: rise 0.45s var(--ease) both;
+  animation-delay: calc(var(--i, 0) * 24ms);
+}
+.item:focus-visible {
+  outline-offset: -2px;
+}
+
+/* ---- Tiles: a card per link (the card look comes from macCard.module.css) ---- */
+.item[data-view='tiles'] {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    'icon'
+    'name'
+    'meta'
+    'path';
+  align-content: start;
+  padding: 20px;
+}
+.item[data-view='tiles'] .icon {
+  justify-self: start;
+  width: 44px;
+  height: 44px;
+  margin-bottom: 16px;
+  border-radius: 11px;
+}
+.item[data-view='tiles'] .icon img,
+.item[data-view='tiles'] .icon svg {
+  width: 26px;
+  height: 26px;
+}
+.item[data-view='tiles'] .path {
+  margin-top: 16px;
+}
+.item[data-view='tiles'] .date {
+  display: none;
+}
+
+/* ---- List: a hairline row per link ---- */
+.item[data-view='list'] {
+  grid-template-columns: 36px minmax(0, 1fr) minmax(0, 200px) minmax(
+      0,
+      200px
+    ) 110px;
+  grid-template-areas: 'icon name meta path date';
+  column-gap: 16px;
+  padding: 10px 16px;
+}
+.item[data-view='list']:hover {
+  background: rgba(0, 0, 0, 0.03);
+}
+.item[data-view='list'][data-selected] {
+  background: #f1f6fe;
+}
+.item[data-view='list'] .icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+}
+.item[data-view='list'] .icon img,
+.item[data-view='list'] .icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.icon {
+  grid-area: icon;
+  display: grid;
+  place-items: center;
+  background: #f4f4f6;
+}
+.icon img,
+.icon svg {
+  border-radius: 4px;
+}
+
+.name {
+  grid-area: name;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.meta {
+  grid-area: meta;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: 13px var(--font-body);
+  color: var(--ink-3);
+}
+
+.path {
+  grid-area: path;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  color: var(--ink-3);
+  font-size: 12.5px;
+}
+.path svg {
+  flex: none;
+}
+.path span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.date {
+  grid-area: date;
+  font-size: 12px;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .item[data-view='list'] {
+    grid-template-columns: 36px minmax(0, 1fr) 100px;
+    grid-template-areas: 'icon name date';
+  }
+  .item[data-view='list'] .meta,
+  .item[data-view='list'] .path {
+    display: none;
+  }
+}
