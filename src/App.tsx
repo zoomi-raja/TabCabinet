@@ -505,20 +505,6 @@ export default function App() {
           >
             {CONFLICT ? <ConflictBanner /> : null}
 
-            <div className="explorer__head">
-              <h1 className="explorer__title">
-                <FolderOpen size={18} className="explorer__icon" />
-                <span>
-                  {searching
-                    ? `Results for “${deferredQuery.trim()}”`
-                    : displayTitle(current)}
-                </span>
-              </h1>
-              <span className="explorer__count">
-                {items.length} item{items.length === 1 ? '' : 's'}
-              </span>
-            </div>
-
             {items.length === 0 ? (
               <div className="empty">
                 <p className="empty__title">
