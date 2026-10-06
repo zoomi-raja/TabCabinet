@@ -151,6 +151,11 @@
   border-bottom-style: solid;
   border-bottom-color: var(--line);
 }
+:root[data-theme='mac'] .tree__label:not([aria-current='page']) svg {
+  color: var(--folder);
+  stroke: var(--folder);
+  fill: none;
+}
 /* Mac: Delete stays red even though the accent is blue */
 :root[data-theme='mac'] .btn--danger {
   background: #ff3b30;
